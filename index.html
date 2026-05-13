@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#D4537E" />
+  <meta name="description" content="Guy &amp; August — distance, memories, and snaps" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" sizes="180x180" href="images/guy.png" />
+  <link rel="apple-touch-icon" href="images/guy.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Couple" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <script>
+    (function () {
+      try {
+        if (
+          window.matchMedia("(display-mode: standalone)").matches ||
+          window.matchMedia("(display-mode: minimal-ui)").matches ||
+          window.navigator.standalone === true
+        ) {
+          document.documentElement.classList.add("is-standalone");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <title>Guy &amp; August — Couple app</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="login-screen" class="login-screen" role="dialog" aria-labelledby="login-title" aria-modal="true">
+    <div class="login-card">
+      <h2 id="login-title" class="login-title">Guy &amp; August</h2>
+      <p class="login-lead">Enter your password once on this device. We remember you here — no account server.</p>
+      <label class="login-label" for="login-password">Password</label>
+      <input type="password" id="login-password" class="login-input" autocomplete="current-password" placeholder="Your password" />
+      <p id="login-error" class="login-error" role="alert" hidden></p>
+      <button type="button" class="btn-primary" id="login-submit">Continue</button>
+      <p class="login-hint">August: <kbd>AUGUST 11</kbd> · Guy: <kbd>GUY11</kbd></p>
+      <div class="login-homescreen" role="region" aria-label="Add to home screen">
+        <p class="login-homescreen-title">Add to your home screen (like a real app)</p>
+        <ul class="login-homescreen-steps">
+          <li><strong>iPhone:</strong> use <strong>Safari</strong> to open this page → tap <strong>Share</strong> <span aria-hidden="true">📤</span> → <strong>Add to Home Screen</strong> → tap <strong>Add</strong>.</li>
+          <li><strong>Android:</strong> use <strong>Chrome</strong> → menu <strong>⋮</strong> → <strong>Add to Home screen</strong> or <strong>Install app</strong>.</li>
+        </ul>
+        <button type="button" class="btn-outline login-copy-wide" id="login-copy-link-btn">
+          Copy link — paste on your phone
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" role="main" id="main-app" hidden>
+    <h1 class="sr-only">Guy &amp; August couple app</h1>
+
+    <div id="screen-distance" class="screen active">
+      <div class="card">
+        <div class="couple-row">
+          <div class="couple-avatar">
+            <img
+              class="couple-avatar-photo"
+              src="images/guy.png"
+              alt="Guy"
+              width="52"
+              height="52"
+              decoding="async"
+            />
+            <span>Guy</span>
+          </div>
+          <div class="heart-mid" aria-hidden="true">♥</div>
+          <div class="couple-avatar">
+            <img
+              class="couple-avatar-photo couple-avatar-photo--august"
+              src="images/august.png"
+              alt="August"
+              width="52"
+              height="52"
+              decoding="async"
+            />
+            <span>August</span>
+          </div>
+        </div>
+        <div class="distance-display">
+          <div class="distance-number" id="dist-num">—</div>
+          <div class="distance-unit" id="dist-unit">waiting for locations…</div>
+        </div>
+      </div>
+
+      <div class="card italy-countdown-card" aria-labelledby="italy-countdown-title">
+        <div class="italy-countdown-header">
+          <span class="italy-flag" aria-hidden="true">🇮🇹</span>
+          <div>
+            <h2 id="italy-countdown-title" class="italy-countdown-title">Countdown to Italy</h2>
+            <p class="italy-countdown-goal">Goal: <time id="italy-goal-date" datetime="2026-08-17">17 August 2026</time> · your device’s date &amp; time</p>
+          </div>
+        </div>
+        <div id="italy-countdown-active" class="italy-countdown-grid" role="timer" aria-live="polite" aria-atomic="true">
+          <div class="italy-countdown-unit">
+            <span class="italy-countdown-value" id="italy-days">—</span>
+            <span class="italy-countdown-label">days</span>
+          </div>
+          <div class="italy-countdown-unit">
+            <span class="italy-countdown-value" id="italy-hours">—</span>
+            <span class="italy-countdown-label">hours</span>
+          </div>
+          <div class="italy-countdown-unit">
+            <span class="italy-countdown-value" id="italy-mins">—</span>
+            <span class="italy-countdown-label">min</span>
+          </div>
+          <div class="italy-countdown-unit">
+            <span class="italy-countdown-value" id="italy-secs">—</span>
+            <span class="italy-countdown-label">sec</span>
+          </div>
+        </div>
+        <p id="italy-countdown-done" class="italy-countdown-done" hidden>Italy day is here — enjoy every moment together ✨</p>
+      </div>
+
+      <div class="card">
+        <div class="loc-person">
+          <img
+            class="avatar-sm avatar-sm-guy"
+            src="images/guy.png"
+            alt=""
+            width="36"
+            height="36"
+            decoding="async"
+          />
+          <div class="loc-info">
+            <div class="loc-label">Guy</div>
+            <div class="loc-value" id="me-loc-text"><span class="status-dot dot-gray"></span>no location yet</div>
+          </div>
+          <div class="loc-actions" id="me-loc-actions">
+            <button type="button" class="loc-btn" onclick="getGPS('me')" id="me-gps-btn">
+              <span class="loc-btn-icon" aria-hidden="true">📍</span> use GPS
+            </button>
+            <span class="loc-live" id="me-live-badge" hidden><span class="status-dot dot-green dot-pulse" aria-hidden="true"></span> tracking</span>
+          </div>
+        </div>
+        <div class="loc-person">
+          <img
+            class="avatar-sm avatar-sm-august"
+            src="images/august.png"
+            alt=""
+            width="36"
+            height="36"
+            decoding="async"
+          />
+          <div class="loc-info">
+            <div class="loc-label">August</div>
+            <div class="loc-value" id="her-loc-text"><span class="status-dot dot-gray"></span>no location yet</div>
+          </div>
+          <div class="loc-actions" id="her-loc-actions">
+            <button type="button" class="loc-btn" onclick="getGPS('her')" id="her-gps-btn">
+              <span class="loc-btn-icon" aria-hidden="true">📍</span> use GPS
+            </button>
+            <span class="loc-live" id="her-live-badge" hidden><span class="status-dot dot-green dot-pulse" aria-hidden="true"></span> tracking</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-primary" onclick="calcDistance()" style="margin-top: 14px">
+          <span class="btn-inline-icon" aria-hidden="true">🗺️</span> calculate distance
+        </button>
+
+        <button type="button" class="manual-toggle" onclick="toggleManual()">or enter locations manually</button>
+        <div class="manual-section" id="manual-section">
+          <input type="text" id="loc-me" placeholder="Guy's city (e.g. Bangkok)" style="margin-top: 8px" />
+          <input type="text" id="loc-her" placeholder="August's city (e.g. Chiang Mai)" />
+          <button type="button" class="btn-outline" onclick="calcManual()">calculate from city names</button>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <span class="info-box-icon" aria-hidden="true">ℹ️</span>
+        <span><span id="gps-info-text">Your line updates automatically. The other person can use “use GPS” on their phone, or set a place manually.</span></span>
+      </div>
+
+      <div class="card install-card">
+        <div class="section-title">put on home screen</div>
+        <p class="install-lead">
+          This is still your website, but after you add it, it opens from an icon <strong>full screen</strong> — no browser bar — like a simple app.
+        </p>
+        <ol class="install-steps">
+          <li><strong>iPhone:</strong> open this page in <strong>Safari</strong> → <strong>Share</strong> 📤 → <strong>Add to Home Screen</strong> → <strong>Add</strong>.</li>
+          <li><strong>Android:</strong> open in <strong>Chrome</strong> → <strong>⋮</strong> → <strong>Add to Home screen</strong> or <strong>Install app</strong>.</li>
+        </ol>
+        <p class="install-url-label">Open this address on your phone:</p>
+        <p class="install-url" id="install-page-url"></p>
+        <button type="button" class="btn-primary" id="copy-app-link-btn">Copy link for phone</button>
+        <button type="button" class="btn-outline" id="pwa-install-btn" hidden>Install with Chrome</button>
+        <p class="install-foot">
+          On the same Wi‑Fi: from your computer run <code>python3 -m http.server 8080</code>, then on the phone open
+          <code>http://YOUR-COMPUTER-IP:8080</code> (replace with your PC’s LAN address). For a link that works from anywhere, upload this folder to a free host such as
+          <a href="https://www.netlify.com/" target="_blank" rel="noopener">Netlify</a> or
+          <a href="https://pages.cloudflare.com/" target="_blank" rel="noopener">Cloudflare Pages</a> (use HTTPS).
+        </p>
+      </div>
+
+      <p class="sign-out-wrap">
+        <button type="button" class="sign-out-btn" id="sign-out-btn">Sign out on this device</button>
+      </p>
+    </div>
+
+    <div id="screen-memories" class="screen">
+      <div class="card">
+        <div class="section-title">add a memory</div>
+        <input type="text" id="mem-title" placeholder="Memory title (e.g. First date 🌙)" />
+        <input type="date" id="mem-date" />
+        <textarea id="mem-note" placeholder="What made it special..."></textarea>
+        <input type="text" id="mem-tag" placeholder="Tag (optional, e.g. travel, anniversary)" />
+        <button type="button" class="btn-primary" onclick="addMemory()"><span aria-hidden="true">＋</span> save memory</button>
+      </div>
+      <div class="section-title" style="margin-top: 4px">Guy &amp; August's memories</div>
+      <div id="mem-list"></div>
+    </div>
+
+    <div id="screen-camera" class="screen">
+      <div class="section-title">our snaps</div>
+      <div class="cam-area">
+        <video id="cam-video" autoplay playsinline muted></video>
+        <canvas id="cam-canvas" class="preview"></canvas>
+        <div class="cam-placeholder" id="cam-placeholder">
+          <span class="cam-placeholder-icon" aria-hidden="true">📷</span>
+          <span>tap start camera below</span>
+        </div>
+      </div>
+      <div class="cam-controls">
+        <button type="button" class="btn-primary" id="cam-start-btn" onclick="startCam()" style="width: auto; padding: 8px 20px">
+          <span aria-hidden="true">📷</span> start camera
+        </button>
+        <button type="button" class="shutter" id="shutter-btn" onclick="takeSnap()" style="display: none" aria-label="Take photo">
+          <span class="shutter-inner" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="btn-primary" id="retake-btn" onclick="retake()" style="display: none; width: auto; padding: 8px 20px">retake</button>
+      </div>
+      <div class="snap-gallery" id="snap-gallery"></div>
+    </div>
+
+    <nav class="bottom-nav" aria-label="App navigation">
+      <button type="button" class="nav-btn active" onclick="showScreen('distance', this)" aria-label="Distance">
+        <span class="nav-btn-icon" aria-hidden="true">🗺️</span>
+        <span>distance</span>
+      </button>
+      <button type="button" class="nav-btn" onclick="showScreen('memories', this)" aria-label="Memories">
+        <span class="nav-btn-icon" aria-hidden="true">♥</span>
+        <span>memories</span>
+      </button>
+      <button type="button" class="nav-btn" onclick="showScreen('camera', this)" aria-label="Camera">
+        <span class="nav-btn-icon" aria-hidden="true">📷</span>
+        <span>camera</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    /* Italy countdown: inline so it always runs even if an old service worker cached script.js */
+    (function () {
+      var GOAL_MS = new Date(2026, 7, 17, 0, 0, 0, 0).getTime();
+      var timer = null;
+      function pad(n) {
+        return n < 10 ? "0" + n : String(n);
+      }
+      function tick() {
+        var dEl = document.getElementById("italy-days");
+        var hEl = document.getElementById("italy-hours");
+        var mEl = document.getElementById("italy-mins");
+        var sEl = document.getElementById("italy-secs");
+        var activeEl = document.getElementById("italy-countdown-active");
+        var doneEl = document.getElementById("italy-countdown-done");
+        var goalTimeEl = document.getElementById("italy-goal-date");
+        if (!dEl || !hEl || !mEl || !sEl || !activeEl) return;
+
+        if (goalTimeEl && !goalTimeEl.getAttribute("data-locale-set")) {
+          try {
+            goalTimeEl.textContent = new Date(2026, 7, 17, 0, 0, 0, 0).toLocaleDateString(undefined, {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+          } catch (e) {
+            goalTimeEl.textContent = "17 August 2026";
+          }
+          goalTimeEl.setAttribute("data-locale-set", "1");
+        }
+
+        var ms = GOAL_MS - Date.now();
+        if (ms <= 0) {
+          activeEl.hidden = true;
+          if (doneEl) doneEl.hidden = false;
+          if (timer) clearInterval(timer);
+          timer = null;
+          return;
+        }
+        activeEl.hidden = false;
+        if (doneEl) doneEl.hidden = true;
+
+        var sec = Math.floor(ms / 1000);
+        var days = Math.floor(sec / 86400);
+        sec -= days * 86400;
+        var hours = Math.floor(sec / 3600);
+        sec -= hours * 3600;
+        var mins = Math.floor(sec / 60);
+        sec -= mins * 60;
+
+        dEl.textContent = String(days);
+        hEl.textContent = pad(hours);
+        mEl.textContent = pad(mins);
+        sEl.textContent = pad(sec);
+      }
+      function start() {
+        tick();
+        if (timer) clearInterval(timer);
+        timer = setInterval(tick, 1000);
+      }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", start);
+      } else {
+        start();
+      }
+    })();
+  </script>
+</body>
+</html>
