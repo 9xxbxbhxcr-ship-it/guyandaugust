@@ -591,6 +591,10 @@ canvas.preview {
   margin-bottom: 8px;
 }
 
+.cam-flip-btn {
+  min-width: 88px;
+}
+
 .shutter {
   width: 64px;
   height: 64px;

@@ -5,7 +5,7 @@
  * Passwords are checked only in the browser (not secure for public apps).
  */
 
-/* global: showScreen, toggleManual, getGPS, calcDistance, calcManual, addMemory, deleteMemory, startCam, takeSnap, retake, tryLogin, signOut */
+/* global: showScreen, toggleManual, getGPS, calcDistance, calcManual, addMemory, deleteMemory, startCam, takeSnap, retake, flipCam, tryLogin, signOut */
 
 var DB_KEY = "coupleapp_v3";
 var SNAPS_KEY = "coupleapp_v3_snaps";
@@ -23,6 +23,7 @@ var SNAP_JPEG_QUALITY = 0.72;
 var appData = { memories: [], snaps: [] };
 var coords = { me: null, her: null };
 var camStream = null;
+var camFacingMode = "user";
 
 var watchId = null;
 var lastGeocodeAt = { me: 0, her: 0 };
@@ -691,8 +692,12 @@ function startCam() {
     alert("Camera not available — please allow camera access.");
     return;
   }
+  var constraints = {
+    video: { facingMode: { ideal: camFacingMode } },
+    audio: false,
+  };
   navigator.mediaDevices
-    .getUserMedia({ video: { facingMode: "user" }, audio: false })
+    .getUserMedia(constraints)
     .then(function (stream) {
       camStream = stream;
       var video = document.getElementById("cam-video");
@@ -701,6 +706,7 @@ function startCam() {
       document.getElementById("cam-placeholder").style.display = "none";
       document.getElementById("cam-canvas").style.display = "none";
       document.getElementById("cam-start-btn").style.display = "none";
+      document.getElementById("cam-flip-btn").style.display = "inline-flex";
       document.getElementById("shutter-btn").style.display = "flex";
       document.getElementById("retake-btn").style.display = "none";
       return video.play();
@@ -739,8 +745,22 @@ function retake() {
   }
   document.getElementById("cam-canvas").style.display = "none";
   document.getElementById("retake-btn").style.display = "none";
+  document.getElementById("cam-flip-btn").style.display = "none";
   document.getElementById("cam-start-btn").style.display = "inline-flex";
   document.getElementById("cam-placeholder").style.display = "flex";
+}
+
+function flipCam() {
+  camFacingMode = camFacingMode === "user" ? "environment" : "user";
+  var video = document.getElementById("cam-video");
+  var shutter = document.getElementById("shutter-btn");
+  if (video && video.style.display === "block" && shutter && shutter.style.display !== "none") {
+    stopCam();
+    startCam();
+  } else {
+    var modeLabel = camFacingMode === "user" ? "front camera" : "back camera";
+    alert("Camera set to " + modeLabel + ". Tap start camera.");
+  }
 }
 
 function deleteSnap(id) {
